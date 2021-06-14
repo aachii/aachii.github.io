@@ -22,5 +22,5 @@ function draw() {
 }
 
 function mouseClicked() {
-  append(dots, new Dot(mouseX, mouseY, 20, color(55, 170, random(0, 240)), createVector(random(-2, 2), random(-2, 2))));
+  append(dots, new Dot(mouseX, mouseY, 20, color(55, random(70, 170), random(40, 240)), createVector(random(-2, 2), random(-2, 2))));
 }
