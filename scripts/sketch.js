@@ -1,15 +1,11 @@
-let width;
-let height;
 let dots = [];
 
 function setup() {
-  width = windowWidth-20;
-  height = windowHeight-20;;
-  createCanvas(width, height);
+  createCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
-  background(238, 238, 238, 30);
+  background(234, 234, 234, 30);
   for (dot of dots) {
     dot.update();
     dot.draw();
@@ -22,5 +18,9 @@ function draw() {
 }
 
 function mouseClicked() {
-  append(dots, new Dot(mouseX, mouseY, 20, color(55, random(70, 170), random(40, 240)), createVector(random(-2, 2), random(-2, 2))));
+  append(dots, new Dot(mouseX, mouseY, 20, color(55, random(70, 170), random(40, 240)), createVector(0, -2)));
+}
+
+function windowResized() {
+  resizeCanvas(windowWidth, windowHeight);
 }
