@@ -1,12 +1,26 @@
+let width;
+let height;
+let dots = [];
+
 function setup() {
-  createCanvas(windowWidth-20, windowHeight-20);
+  width = windowWidth-20;
+  height = windowHeight-20;;
+  createCanvas(width, height);
 }
 
 function draw() {
-  if (mouseIsPressed) {
-    fill(0);
-  } else {
-    fill(255);
+  background(238, 238, 238, 30);
+  for (dot of dots) {
+    dot.update();
+    dot.draw();
+    dot.checkEdges();
   }
-  ellipse(mouseX, mouseY, 80, 80);
+
+  if (mouseIsPressed) {
+    mouseClicked();
+  }
+}
+
+function mouseClicked() {
+  append(dots, new Dot(mouseX, mouseY, 20, color(55, 170, random(0, 240)), createVector(random(-2, 2), random(-2, 2))));
 }
