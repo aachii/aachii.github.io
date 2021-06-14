@@ -5,17 +5,21 @@ class Dot {
     this.color = color;
     this.vel = createVector(0, 0);
     this.acc = acc;
+
+    this.counter = 200;
   }
 
   draw() {
-    noStroke();
-    fill(this.color);
-    ellipse(this.pos.x, this.pos.y, this.size);
+    if (this.counter > 0) {
+      noStroke();
+      fill(this.color);
+      ellipse(this.pos.x, this.pos.y, this.size);
 
-    let dirPoint = this.vel.copy();
-    dirPoint.normalize().mult(this.size/2);
-    stroke(50);
-    line(this.pos.x, this.pos.y, this.pos.x+dirPoint.x, this.pos.y+dirPoint.y);
+      let dirPoint = this.vel.copy();
+      dirPoint.normalize().mult(this.size/2);
+      stroke(50);
+      line(this.pos.x, this.pos.y, this.pos.x+dirPoint.x, this.pos.y+dirPoint.y);
+    }
   }
 
   update() {
@@ -25,6 +29,10 @@ class Dot {
 
     // random steering
     this.steer();
+
+    if (this.counter != 0) {
+      this.counter -= 1;
+    }
   }
 
   checkEdges() {
