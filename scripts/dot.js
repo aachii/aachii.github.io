@@ -1,5 +1,6 @@
 class Dot {
-  constructor(x, y, size, color = color(0, 0, 0), acc = createVector(0, 0)) {
+  constructor(id, x, y, size, color = color(0, 0, 0), acc = createVector(0, 0)) {
+    this.id = id;
     this.pos = createVector(x, y);
     this.size = size;
     this.color = color;
@@ -28,15 +29,27 @@ class Dot {
   }
 
   checkEdges() {
-    if (this.pos.x > windowWidth || this.pos.x < 0) {
+    if (this.pos.x > windowWidth-this.size) {
+      this.pos.x = windowWidth-this.size;
       this.vel.x *= -1;
     }
-    if (this.pos.y > windowHeight || this.pos.y < 0) {
+    if (this.pos.x < 0+this.size) {
+      this.pos.x = 0+this.size;
+      this.vel.x *= -1;
+    }
+    if (this.pos.y > windowHeight-this.size) {
+      this.pos.y = windowHeight-this.size;
+      this.vel.y *= -1;
+    }
+    if (this.pos.y < 0+this.size) {
+      this.pos.y = 0+this.size
       this.vel.y *= -1;
     }
   }
 
   steer() {
-    this.vel.rotate(random(-0.2, 0.2));
+    if (random(0, 3) < 1) {
+      this.vel.rotate(random(-0.4, 0.4));
+    }
   }
 }
