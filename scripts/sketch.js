@@ -1,14 +1,15 @@
 let dots = [];
 let id = 0;
-let distance = 700;
+let distance = 500;
 let angle = 0.5;
+let lineToClosest = false;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
 }
 
 function draw() {
-  background(234, 234, 234, 20);
+  background(234, 234, 234, 10);
   for (dot of dots) {
     dot.update();
     followClosest(dot);
@@ -22,7 +23,7 @@ function draw() {
 }
 
 function mouseClicked() {
-  append(dots, new Dot(id, mouseX, mouseY, 10, color(55, random(70, 170), random(40, 240)), createVector(0, -5)));
+  append(dots, new Dot(id, mouseX, mouseY, 10, color(random(50, 200), random(50, 200), random(50, 200)), createVector(0, -5)));
   id += 1;
 }
 
@@ -32,32 +33,32 @@ function windowResized() {
 
 function followClosest(dot) {
   let closest;
-  let closestDist;
+  let closestDist = distance;
   let closestAngle;
   for (other of dots) {
+
+    // not for itself
     if (dot.id != other.id) {
       let dist = dot.pos.dist(other.pos);
       if (dist < distance && dist > dot.size) {
-        closestAngle = dot.vel.angleBetween(other.pos.copy().sub(dot.pos));
-        if (closestAngle < angle && closestAngle > -angle) {
-          if (typeof closest != "undefined") {
-            if (dist < closestDist) {
-              closest = other.pos.copy();
-              closestDist = dist;
-            }
-          } else {
+        let otherAngle = dot.vel.angleBetween(other.pos.copy().sub(dot.pos));
+        if (otherAngle < angle && otherAngle > -angle) {
+
+          // other dot is in given distance and angle
+          if (dist < closestDist) {
             closest = other.pos.copy();
             closestDist = dist;
+            closestAngle = otherAngle;
           }
         }
       }
     }
   }
   if (typeof closest != "undefined") {
-    stroke(50);
-    line(dot.pos.x, dot.pos.y, closest.x, closest.y);
-    if (random(0, 4) < 2.5) {
-      dot.vel.rotate(closestAngle/10);
+    if (lineToClosest) {
+      stroke(50);
+      line(dot.pos.x, dot.pos.y, closest.x, closest.y);
     }
+    dot.vel.rotate(closestAngle/2);
   }
 }
