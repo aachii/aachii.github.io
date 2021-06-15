@@ -66,7 +66,7 @@ class Dot {
 
   steer() {
     if (random(0, 10) < 8) {
-      this.vel.rotate(random(-0.1, 0.1));
+      this.vel.rotate(random(-0.2, 0.2));
     }
   }
 }

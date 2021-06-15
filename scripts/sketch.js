@@ -1,8 +1,8 @@
 let dots = [];
 let id = 0;
-let distance = 500;
+let distance = 200;
 let angle = 0.5;
-let lineToClosest = false;
+let lineToClosest = true;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);
