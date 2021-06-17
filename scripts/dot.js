@@ -1,4 +1,7 @@
 let bounce = false;
+let velocityLine = false;
+let randomSteerPercent = 100;
+let randomSteerAmount = 0.3;
 
 class Dot {
   constructor(id, x, y, size, color = color(0, 0, 0), acc = createVector(0, 0)) {
@@ -15,10 +18,12 @@ class Dot {
     fill(this.color);
     ellipse(this.pos.x, this.pos.y, this.size);
 
-    let dirPoint = this.vel.copy();
-    dirPoint.normalize().mult(this.size/2);
-    stroke(50);
-    line(this.pos.x, this.pos.y, this.pos.x+dirPoint.x, this.pos.y+dirPoint.y);
+    if (velocityLine) {
+      let dirPoint = this.vel.copy();
+      dirPoint.normalize().mult(this.size/2);
+      stroke(50);
+      line(this.pos.x, this.pos.y, this.pos.x+dirPoint.x, this.pos.y+dirPoint.y);
+    }
   }
 
   update() {
@@ -65,8 +70,8 @@ class Dot {
   }
 
   steer() {
-    if (random(0, 10) < 8) {
-      this.vel.rotate(random(-0.2, 0.2));
+    if (random(0, 100) < randomSteerPercent) {
+      this.vel.rotate(random(-randomSteerAmount, randomSteerAmount));
     }
   }
 }
