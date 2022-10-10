@@ -1,90 +1,97 @@
+// I am the animator!
+
+let bgimage;
+let doco;
 let dots = [];
-let dotSpeed = 4;
-let id = 0;
+let dotSpeed = 7;
+let dotSize = 7;
 let distance = 300;
 let angle = 1.5;
+let percentualLeadChange = 1;
 let spawnMultiple = true;
 let lineToClosest = false;
 let steeringLines = false;
+let framerate = 30;
+let imageCocos = [];
+let titleStartPoint;
+let animations = [];
+let animationsIndex = 0;
+
+// performance parameters
+p5.disableFriendlyErrors = true;
 
 function setup() {
-  createCanvas(windowWidth, windowHeight);
+    // screen setup
+    createCanvas(windowWidth, windowHeight);
+    frameRate(framerate);
+
+    doco = new DotContainer();
+
+    let idleTime = 1500;
+    let imageTime = 2000;
+    let snakeTime = 10000;
+
+    // setup animation sequences
+    animations = [
+        new Spawner(document.querySelector('#star'), 6, doco),
+        new Idle(doco, imageTime, false),
+        new Idle(doco, idleTime),
+        new ImageMagicAnimator(document.querySelector('#janick'), 4, doco, new LayoutOptions(createVector(0, windowHeight * 0.3), true)),
+        new Idle(doco, imageTime, false),
+        new CleanupAnimator(doco),
+        new Idle(doco, idleTime * 3),
+        new ImageMagicAnimator(document.querySelector('#prog'), 3, doco, new LayoutOptions(createVector(0, windowHeight * 0.4), true)),
+        new Idle(doco, imageTime, false),
+        new CleanupAnimator(doco),
+        new Idle(doco, idleTime),
+        new ImageMagicAnimator(document.querySelector('#achi'), 5, doco, new LayoutOptions(createVector(windowWidth * 0.05, windowHeight * 0.4))),
+        new Idle(doco, imageTime, false),
+        new CleanupAnimator(doco),
+        new Idle(doco, idleTime),
+        new ImageMagicAnimator(document.querySelector('#skater'), 4, doco, new LayoutOptions(createVector(windowWidth * 0.25, windowHeight * 0.2))),
+        new Idle(doco, imageTime, false),
+        new CleanupAnimator(doco),
+        new Idle(doco, idleTime),
+        new SnakeAnimator(doco, snakeTime, 5),
+        new ImageMagicAnimator(document.querySelector('#gaming'), 4, doco, new LayoutOptions(createVector(windowWidth * 0.5, windowHeight * 0.2))),
+        new Idle(doco, imageTime, false),
+        new CleanupAnimator(doco),
+        new Idle(doco, idleTime),
+        new SnakeAnimator(doco, snakeTime, 5),
+        new ImageMagicAnimator(document.querySelector('#minion'), 4, doco, new LayoutOptions(createVector(windowWidth * 0.5, windowHeight * 0.3))),
+        new Idle(doco, imageTime, false),
+        new CleanupAnimator(doco),
+        new Idle(doco, idleTime),
+        new ImageMagicAnimator(document.querySelector('#tnj'), 5, doco, new LayoutOptions(createVector(windowWidth * 0.2, windowHeight * 0.3))),
+        new Idle(doco, imageTime, false),
+        new CleanupAnimator(doco),
+        new Idle(doco, idleTime),
+        new ImageMagicAnimator(document.querySelector('#swiss'), 2, doco, new LayoutOptions(createVector(0, windowHeight * 0.2), true)),
+        new Idle(doco, imageTime, false),
+        new CleanupAnimator(doco),
+        new Idle(doco, idleTime),
+        new SnakeAnimator(doco, snakeTime, 5),
+        new Idle(doco)
+    ]
+    animations[animationsIndex].setup();
 }
 
 function draw() {
-  background(5, 5, 5, 10);
-  for (dot of dots) {
-    dot.update();
-    followClosest(dot);
-    dot.draw();
-    dot.checkEdges();
-  }
+    background(0, 0, 0, 15);
+    for (dot of doco.dots) {
+        dot.update();
+        doco.selectLeader(dot);
+        dot.draw();
+        doco.checkEdges(dot);
+    }
 
-  if (spawnMultiple && mouseIsPressed) {
-    mouseClicked();
-  }
-}
-
-function mouseClicked() {
-  let spawn = createVector(mouseX, mouseY);
-  let randomOffset = p5.Vector.random2D().mult(dotSpeed*dotSpeed);
-  spawn.add(randomOffset);
-  append(dots, new Dot(id, spawn.x, spawn.y, 10, color(random(50, 200), random(50, 200), random(50, 200)), randomOffset));
-  id += 1;
+    if (animations[animationsIndex].finished) {
+        animationsIndex++;
+        animations[animationsIndex].setup();
+    }
+    animations[animationsIndex].draw();
 }
 
 function windowResized() {
-  resizeCanvas(windowWidth, windowHeight);
-}
-
-function followClosest(dot) {
-  let closest;
-  let closestDist = distance;
-  let closestAngle;
-  for (other of dots) {
-
-    // not for itself
-    if (dot.id != other.id) {
-      let dist = dot.pos.dist(other.pos);
-      if (dist < distance && dist > dot.size) {
-        let otherAngle = dot.vel.angleBetween(other.pos.copy().sub(dot.pos));
-        if (otherAngle < angle && otherAngle > -angle) {
-
-          // other dot is in given distance and angle
-          if (dist < closestDist) {
-            closest = other;
-            closestDist = dist;
-            closestAngle = otherAngle;
-          }
-        }
-      }
-    }
-  }
-  if (typeof closest != "undefined") {
-        
-    // steer towards closest
-    let dotToOther = closest.pos.copy().sub(dot.pos);
-    let newDir = p5.Vector.lerp(dotToOther, closest.vel, 0.95);
-    let newAngle = dot.vel.angleBetween(newDir);
-    let originToNew = dot.pos.copy().add(newDir);
-
-    if (steeringLines) {
-      stroke(50);
-      line(dot.pos.x, dot.pos.y, originToNew.x, originToNew.y);
-    }
-    if (lineToClosest) {
-      stroke(50);
-      line(dot.pos.x, dot.pos.y, closest.pos.x, closest.pos.y);
-    }
-
-    // steer towards same velocity as closest other dot
-    dot.vel.rotate(newAngle/6);
-
-    // set speed based on distance to closest
-    if (closestDist > dot.size * 2) {
-      dot.vel.setMag(dotSpeed+1);
-    }
-  } else {
-    dot.vel.setMag(dotSpeed);
-  }
+    resizeCanvas(windowWidth, windowHeight);
 }
