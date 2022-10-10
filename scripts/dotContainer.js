@@ -7,7 +7,7 @@ class DotContainer {
     }
 
     addDot(dot) {
-        dot.id = this.dotId;
+        dot.did = this.dotId;
         this.dots.push(dot);
         this.dotId++;
     }
@@ -25,7 +25,7 @@ class DotContainer {
             for (let other of doco.dots) {
     
                 // not for itself
-                if (dot.id != other.id) {
+                if (dot.did != other.did) {
                     //let dist = dot.pos.dist(other.pos);
                     let dist = distSquared(dot.pos, other.pos);
                     if (dist < distance * distance && dist > dot.size * dot.size) {

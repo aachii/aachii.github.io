@@ -7,7 +7,7 @@ class Dot {
     outsideControl = false;
     doLeadSwitch = true;
     gotoTarget = false;
-    id;
+    did;
 
     constructor(x, y, size, color = color(0, 0, 0), acc = createVector(0, 0)) {
         this.pos = createVector(x, y);
