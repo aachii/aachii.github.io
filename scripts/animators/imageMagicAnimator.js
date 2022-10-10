@@ -64,7 +64,7 @@ class ImageMagicAnimator {
                 let cucoco = this.imageCocos.pop();
                 //dot.outsideControl = true;
                 leftoverIndex++;
-                this.dotToCuco[dot.id] = cucoco;
+                this.dotToCuco[dot.did] = cucoco;
             } else {
                 leftoverDots.push(dot);
             }
@@ -75,11 +75,11 @@ class ImageMagicAnimator {
             let newDot = random(this.doco.dots).copyDot();
             //newDot.outsideControl = true;
             this.doco.addDot(newDot);
-            this.dotToCuco[newDot.id] = cucoco;
+            this.dotToCuco[newDot.did] = cucoco;
         }
         // set the pixel target for all dots
         for (let dot of this.doco.dots) {
-            dot.setTarget(this.dotToCuco[dot.id]);
+            dot.setTarget(this.dotToCuco[dot.did]);
             dot.doLeadSwitch = false;
         }
     }
@@ -88,7 +88,7 @@ class ImageMagicAnimator {
         // TODO: wait until all are in position
         let allFinished = true;
         for (let dot of this.doco.dots) {
-            let cucoco = this.dotToCuco[dot.id];
+            let cucoco = this.dotToCuco[dot.did];
             //let dist = dot.pos.dist(dot.target.getPosVec());
             let dist = distSquared(dot.pos, dot.target.getPosVec());
             if (!dot.outsideControl && dist < 100*100) {
